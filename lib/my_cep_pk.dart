@@ -3,6 +3,10 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CepService {
+  final http.Client client;
+
+  CepService({http.Client? client}) : client = client ?? http.Client();
+
   static Future<String?> carregarResultadoSalvo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('endereco_salvo');
@@ -13,9 +17,9 @@ class CepService {
     await prefs.setString('endereco_salvo', resultado);
   }
 
-  static Future<String> pesquisarCep(String cep) async {
+  Future<String> pesquisarCep(String cep) async {
     var url = Uri.parse('https://viacep.com.br/ws/$cep/json/');
-    var response = await http.get(url);
+    var response = await client.get(url);
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
       if (data['erro'] == null) {
