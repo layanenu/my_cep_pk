@@ -3,9 +3,18 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CepService {
-  final http.Client client;
+  static http.Client? _client;
 
-  CepService({http.Client? client}) : client = client ?? http.Client();
+  static set client(http.Client client) {
+    _client = client;
+  }
+
+  static http.Client get client {
+    if (_client == null) {
+      _client = http.Client();
+    }
+    return _client!;
+  }
 
   static Future<String?> carregarResultadoSalvo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
